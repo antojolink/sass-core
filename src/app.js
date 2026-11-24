@@ -3,7 +3,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const { getEnv } = require('./config/env');
 const { logger: defaultLogger, createHttpLogger } = require('./config/logger');
-const { getHealth } = require('./controllers/healthController');
+const routes = require('./routes');
 const { notFoundHandler, errorHandler } = require('./middlewares/errorHandler');
 
 function createApp(options = {}) {
@@ -28,7 +28,7 @@ function createApp(options = {}) {
   app.use(express.json());
   app.use(createHttpLogger(appLogger));
 
-  app.get('/health', getHealth);
+  app.use(routes);
 
   if (typeof options.extraRoutes === 'function') {
     const extraRouter = express.Router();
