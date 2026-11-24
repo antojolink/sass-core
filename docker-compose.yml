@@ -1,0 +1,44 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      APP_ENV: dev
+      PORT: 3000
+      DATABASE_URL: postgres://antojolink:antojolink@postgres:5432/antojolink
+      CORS_ORIGINS: http://localhost:5173,http://localhost:3000
+      AWS_REGION: us-east-1
+      AWS_XRAY_DAEMON_ADDRESS: xray:2000
+      DEV_AUTH_BYPASS: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: antojolink
+      POSTGRES_PASSWORD: antojolink
+      POSTGRES_DB: antojolink
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U antojolink -d antojolink"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  xray:
+    image: amazon/aws-xray-daemon:latest
+    ports:
+      - "2000:2000/udp"
+    command: ["-o", "-n", "us-east-1"]
+
+volumes:
+  pgdata:
