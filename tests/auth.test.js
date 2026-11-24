@@ -32,6 +32,7 @@ describe('Auth & Multi-Tenant Middleware (#5)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     process.env.NODE_ENV = 'test';
+    process.env.AWS_XRAY_DISABLED = 'true';
     process.env.COGNITO_USER_POOL_ID = 'us-east-1_testpool';
     process.env.COGNITO_CLIENT_ID = 'testclientid';
     process.env.DEV_AUTH_BYPASS = 'false';
