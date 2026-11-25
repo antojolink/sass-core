@@ -10,10 +10,14 @@ services:
       APP_ENV: dev
       PORT: 3000
       DATABASE_URL: postgres://antojolink:antojolink@postgres:5432/antojolink
-      CORS_ORIGINS: http://localhost:5173,http://localhost:4321,http://localhost:3000
-      AWS_REGION: us-east-1
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://localhost:4321,http://localhost:3000}
+      COGNITO_USER_POOL_ID: ${COGNITO_USER_POOL_ID:-}
+      COGNITO_CLIENT_ID: ${COGNITO_CLIENT_ID:-}
+      IMAGES_BUCKET: ${IMAGES_BUCKET:-}
+      IMAGES_BASE_URL: ${IMAGES_BASE_URL:-}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
       AWS_XRAY_DAEMON_ADDRESS: xray:2000
-      DEV_AUTH_BYPASS: "true"
+      DEV_AUTH_BYPASS: ${DEV_AUTH_BYPASS:-true}
     depends_on:
       postgres:
         condition: service_healthy
