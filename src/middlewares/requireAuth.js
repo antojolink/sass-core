@@ -59,11 +59,16 @@ async function requireAuth(req, res, next) {
 
     let usuario = await usuarioRepo.findByCognitoSub(sub);
     if (!usuario) {
-      usuario = await usuarioRepo.create({
-        cognitoSub: sub,
-        email,
-        rol: 'ADMIN',
-      });
+      const preSeeded = email ? await usuarioRepo.findByEmail(email) : null;
+      if (preSeeded) {
+        usuario = await usuarioRepo.updateCognitoSub(preSeeded.id, sub);
+      } else {
+        usuario = await usuarioRepo.create({
+          cognitoSub: sub,
+          email,
+          rol: 'ADMIN',
+        });
+      }
     }
 
     req.user = usuario;
