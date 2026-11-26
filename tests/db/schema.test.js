@@ -1,6 +1,7 @@
 const knexfile = require('../../knexfile');
 const initMigration = require('../../src/db/migrations/202611230001_init_schema');
 const plantillaMigration = require('../../src/db/migrations/202611260001_add_plantilla_to_restaurantes');
+const demoUsersMigration = require('../../src/db/migrations/202611260002_seed_demo_admin_users');
 const seedTacosPepe = require('../../src/db/seeds/01_tacos_pepe');
 
 function createMockTableBuilder() {
@@ -266,5 +267,41 @@ describe('Database Schema, Knex Config & Seed (T03)', () => {
 
     await plantillaMigration.down(mockKnex);
     expect(droppedColumns).toContain('plantilla');
+  });
+
+  test('migration 202611260002_seed_demo_admin_users links demo admin emails to demo restaurants', async () => {
+    const insertedUsers = [];
+    const deletedSubs = [];
+
+    const mockKnex = jest.fn((table) => ({
+      where: jest.fn((criteria) => ({
+        first: jest.fn(async () => {
+          if (table === 'restaurantes') {
+            return { id: `rest-${criteria.slug}`, slug: criteria.slug };
+          }
+          return null;
+        }),
+      })),
+      insert: jest.fn(async (row) => {
+        insertedUsers.push(row);
+      }),
+      whereIn: jest.fn((_col, vals) => ({
+        del: jest.fn(async () => {
+          deletedSubs.push(...vals);
+        }),
+      })),
+    }));
+
+    await demoUsersMigration.up(mockKnex);
+    expect(insertedUsers).toHaveLength(3);
+    expect(insertedUsers.map((u) => u.email)).toEqual([
+      'bella.napoli@antojolink.com',
+      'casa.maiz@antojolink.com',
+      'dulce.manana@antojolink.com',
+    ]);
+    expect(insertedUsers.every((u) => u.cognito_sub.startsWith('pending:'))).toBe(true);
+
+    await demoUsersMigration.down(mockKnex);
+    expect(deletedSubs).toHaveLength(3);
   });
 });

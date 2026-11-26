@@ -11,7 +11,9 @@ jest.mock('aws-jwt-verify', () => ({
 
 jest.mock('../src/repositories/usuarioRepo', () => ({
   findByCognitoSub: jest.fn(),
+  findByEmail: jest.fn(),
   create: jest.fn(),
+  updateCognitoSub: jest.fn(),
   updateRestauranteId: jest.fn(),
 }));
 
@@ -87,6 +89,48 @@ describe('Auth & Multi-Tenant Middleware (#5)', () => {
     });
     expect(res.status).toBe(403);
     expect(res.body.error.code).toBe('TENANT_REQUIRED');
+  });
+
+  test('Links pre-seeded demo admin user by email on first Cognito login', async () => {
+    const restId = '22222222-2222-4222-8222-222222222222';
+    mockVerify.mockResolvedValueOnce({
+      sub: 'real-cognito-sub',
+      email: 'bella.napoli@antojolink.com',
+    });
+    usuarioRepo.findByCognitoSub.mockResolvedValueOnce(null);
+    usuarioRepo.findByEmail.mockResolvedValueOnce({
+      id: '11111111-1111-4111-8111-111111111111',
+      cognitoSub: 'pending:bella.napoli@antojolink.com',
+      email: 'bella.napoli@antojolink.com',
+      rol: 'ADMIN',
+      restauranteId: restId,
+    });
+    usuarioRepo.updateCognitoSub.mockResolvedValueOnce({
+      id: '11111111-1111-4111-8111-111111111111',
+      cognitoSub: 'real-cognito-sub',
+      email: 'bella.napoli@antojolink.com',
+      rol: 'ADMIN',
+      restauranteId: restId,
+    });
+    restauranteRepo.findById.mockResolvedValueOnce({
+      id: restId,
+      nombre: 'Trattoria Bella Napoli',
+      slug: 'trattoria-bella-napoli',
+      temaColor: '#9B2226',
+      plantilla: 'trattoria',
+    });
+
+    const app = createApp();
+    const res = await request(app)
+      .get('/restaurantes/me')
+      .set('Authorization', 'Bearer valid-token');
+
+    expect(usuarioRepo.updateCognitoSub).toHaveBeenCalledWith(
+      '11111111-1111-4111-8111-111111111111',
+      'real-cognito-sub'
+    );
+    expect(res.status).toBe(200);
+    expect(res.body.slug).toBe('trattoria-bella-napoli');
   });
 
   test('DEV_AUTH_BYPASS is ignored in test and production environments', async () => {

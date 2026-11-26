@@ -67,9 +67,21 @@ describe('Repositories & Utils Unit Tests', () => {
       restauranteId: null,
     });
 
+    db.mockReturnValueOnce(makeQueryMock(row));
+    expect(await usuarioRepo.findByEmail('A@B.COM')).toMatchObject({
+      id: 'u1',
+      email: 'a@b.com',
+    });
+    expect(await usuarioRepo.findByEmail('')).toBeNull();
+
     db.mockReturnValueOnce(makeQueryMock([row]));
     expect(await usuarioRepo.create({ cognitoSub: 'sub-1', email: 'a@b.com' })).toMatchObject({
       cognitoSub: 'sub-1',
+    });
+
+    db.mockReturnValueOnce(makeQueryMock([{ ...row, cognito_sub: 'sub-2' }]));
+    expect(await usuarioRepo.updateCognitoSub('u1', 'sub-2')).toMatchObject({
+      cognitoSub: 'sub-2',
     });
 
     db.mockReturnValueOnce(makeQueryMock([{ ...row, restaurante_id: 'r1' }]));
