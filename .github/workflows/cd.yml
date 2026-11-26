@@ -10,7 +10,7 @@ permissions:
   id-token: write
 
 env:
-  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/sass-core
+  IMAGE_NAME: alexfdzv/sass-core
 
 jobs:
   build:
