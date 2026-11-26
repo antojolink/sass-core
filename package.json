@@ -12,6 +12,7 @@
     "migrate": "knex migrate:latest",
     "migrate:rollback": "knex migrate:rollback",
     "seed": "knex seed:run",
+    "seed:demos": "knex seed:run --specific=02_demo_restaurantes.js",
     "lint": "eslint src tests",
     "test": "jest"
   },
