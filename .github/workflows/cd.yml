@@ -59,7 +59,7 @@ jobs:
 
       - name: Desplegar en la EC2 con SSM
         env:
-          IMAGE: ${{ needs.build.outputs.image }}
+          IMAGE: ${{ env.IMAGE_NAME }}:${{ github.sha }}
           INSTANCE_ID: ${{ vars.EC2_INSTANCE_ID }}
         run: |
           PARAMS=$(jq -n --arg img "$IMAGE" '{commands: [
@@ -107,7 +107,7 @@ jobs:
 
       - name: Desplegar en la EC2 con SSM
         env:
-          IMAGE: ${{ needs.build.outputs.image }}
+          IMAGE: ${{ env.IMAGE_NAME }}:${{ github.sha }}
           INSTANCE_ID: ${{ vars.EC2_INSTANCE_ID }}
         run: |
           PARAMS=$(jq -n --arg img "$IMAGE" '{commands: [
