@@ -9,6 +9,7 @@ function mapRestaurante(row) {
     nombre: row.nombre,
     slug: row.slug,
     temaColor: row.tema_color,
+    plantilla: row.plantilla || 'trattoria',
     logoUrl: row.logo_url,
     telefono: row.telefono,
     createdAt: row.created_at,
@@ -26,7 +27,7 @@ async function findBySlug(slug) {
   return mapRestaurante(row);
 }
 
-async function create({ nombre, slug, temaColor, logoUrl = null, telefono = null }) {
+async function create({ nombre, slug, temaColor, plantilla, logoUrl = null, telefono = null }) {
   const payload = {
     nombre,
     slug,
@@ -35,6 +36,9 @@ async function create({ nombre, slug, temaColor, logoUrl = null, telefono = null
   };
   if (temaColor !== undefined) {
     payload.tema_color = temaColor;
+  }
+  if (plantilla !== undefined) {
+    payload.plantilla = plantilla;
   }
   const [row] = await db('restaurantes').insert(payload).returning('*');
   return mapRestaurante(row);
@@ -47,6 +51,9 @@ async function update(id, data) {
   }
   if (data.temaColor !== undefined) {
     updates.tema_color = data.temaColor;
+  }
+  if (data.plantilla !== undefined) {
+    updates.plantilla = data.plantilla;
   }
   if (data.logoUrl !== undefined) {
     updates.logo_url = data.logoUrl;

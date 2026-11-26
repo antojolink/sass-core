@@ -86,6 +86,7 @@ describe('Repositories & Utils Unit Tests', () => {
       nombre: 'Tacos Pepe',
       slug: 'tacos-pepe',
       tema_color: '#D62828',
+      plantilla: 'maiz',
       logo_url: null,
       telefono: '3312345678',
       created_at: '2026-01-01',
@@ -93,7 +94,7 @@ describe('Repositories & Utils Unit Tests', () => {
     };
 
     db.mockReturnValueOnce(makeQueryMock(row));
-    expect(await restauranteRepo.findById('r1')).toMatchObject({ slug: 'tacos-pepe' });
+    expect(await restauranteRepo.findById('r1')).toMatchObject({ slug: 'tacos-pepe', plantilla: 'maiz' });
 
     db.mockReturnValueOnce(makeQueryMock(row));
     expect(await restauranteRepo.findBySlug('tacos-pepe')).toMatchObject({ id: 'r1' });
@@ -104,14 +105,16 @@ describe('Repositories & Utils Unit Tests', () => {
         nombre: 'Tacos Pepe',
         slug: 'tacos-pepe',
         temaColor: '#D62828',
+        plantilla: 'maiz',
       })
-    ).toMatchObject({ temaColor: '#D62828' });
+    ).toMatchObject({ temaColor: '#D62828', plantilla: 'maiz' });
 
     db.mockReturnValueOnce(makeQueryMock([row]));
     expect(
       await restauranteRepo.update('r1', {
         nombre: 'New',
         temaColor: '#000000',
+        plantilla: 'nocturno',
         logoUrl: 'https://x.com/a.png',
         telefono: '123',
       })

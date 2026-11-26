@@ -13,6 +13,7 @@ exports.seed = async function seed(knex) {
       nombre: 'Tacos Pepe',
       slug: 'tacos-pepe',
       tema_color: '#D62828',
+      plantilla: 'maiz',
       telefono: '3312345678',
       logo_url: null,
     })

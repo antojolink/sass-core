@@ -13,6 +13,7 @@ const DEMO_RESTAURANTES = [
     nombre: 'Trattoria Bella Napoli',
     slug: 'trattoria-bella-napoli',
     tema_color: '#9B2226',
+    plantilla: 'trattoria',
     telefono: '3314567890',
     logo_url: null,
     categorias: [
@@ -158,6 +159,7 @@ const DEMO_RESTAURANTES = [
     nombre: 'La Casa del Maíz',
     slug: 'la-casa-del-maiz',
     tema_color: '#1B5E20',
+    plantilla: 'maiz',
     telefono: '3319876543',
     logo_url: null,
     categorias: [
@@ -295,6 +297,7 @@ const DEMO_RESTAURANTES = [
     nombre: 'Dulce Mañana Waffle House',
     slug: 'dulce-manana-waffle-house',
     tema_color: '#D97706',
+    plantilla: 'waffle',
     telefono: '3316543210',
     logo_url: null,
     categorias: [
@@ -465,6 +468,7 @@ async function seedRestaurante(knex, restData) {
         nombre: restData.nombre,
         slug: restData.slug,
         tema_color: restData.tema_color,
+        plantilla: restData.plantilla || 'trattoria',
         telefono: restData.telefono,
         logo_url: restData.logo_url,
       })

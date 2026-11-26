@@ -32,6 +32,7 @@ async function createRestaurante(user, data) {
     nombre: data.nombre,
     slug,
     temaColor: data.temaColor,
+    plantilla: data.plantilla,
     logoUrl: data.logoUrl ?? null,
     telefono: data.telefono ?? null,
   });
@@ -52,6 +53,7 @@ async function updateMyRestaurante(tenantId, data) {
   const payload = {
     nombre: data.nombre,
     temaColor: data.temaColor,
+    plantilla: data.plantilla,
     logoUrl: data.logoUrl,
     telefono: data.telefono,
   };
