@@ -175,6 +175,7 @@ describe('Restaurantes Endpoints (#3)', () => {
       nombre: 'Tacos Pepe Renovado',
       slug: 'tacos-pepe',
       temaColor: '#1D3557',
+      plantilla: 'maiz',
       logoUrl: 'https://cdn.example.com/logo.png',
       telefono: '3399999999',
     });
@@ -187,15 +188,18 @@ describe('Restaurantes Endpoints (#3)', () => {
         nombre: 'Tacos Pepe Renovado',
         slug: 'hacked-slug',
         temaColor: '#1D3557',
+        plantilla: 'maiz',
         logoUrl: 'https://cdn.example.com/logo.png',
         telefono: '3399999999',
       });
 
     expect(res.status).toBe(200);
     expect(res.body.slug).toBe('tacos-pepe');
+    expect(res.body.plantilla).toBe('maiz');
     expect(restauranteRepo.update).toHaveBeenCalledWith(tenantId, {
       nombre: 'Tacos Pepe Renovado',
       temaColor: '#1D3557',
+      plantilla: 'maiz',
       logoUrl: 'https://cdn.example.com/logo.png',
       telefono: '3399999999',
     });

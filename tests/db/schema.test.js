@@ -1,5 +1,6 @@
 const knexfile = require('../../knexfile');
 const initMigration = require('../../src/db/migrations/202611230001_init_schema');
+const plantillaMigration = require('../../src/db/migrations/202611260001_add_plantilla_to_restaurantes');
 const seedTacosPepe = require('../../src/db/seeds/01_tacos_pepe');
 
 function createMockTableBuilder() {
@@ -231,5 +232,39 @@ describe('Database Schema, Knex Config & Seed (T03)', () => {
     expect(inserted.restaurantes).toHaveLength(1);
     expect(inserted.categorias).toHaveLength(2);
     expect(inserted.productos).toHaveLength(5);
+  });
+
+  test('migration 202611260001_add_plantilla_to_restaurantes adds and drops plantilla column', async () => {
+    const addedColumns = [];
+    const droppedColumns = [];
+    const updates = [];
+
+    const mockKnex = jest.fn((table) => ({
+      whereIn: jest.fn((col, vals) => ({
+        update: jest.fn(async (data) => {
+          updates.push({ table, col, vals, data });
+        }),
+      })),
+      where: jest.fn((criteria) => ({
+        update: jest.fn(async (data) => {
+          updates.push({ table, criteria, data });
+        }),
+      })),
+    }));
+    mockKnex.schema = {
+      alterTable: jest.fn(async (_table, cb) => {
+        const builder = createMockTableBuilder();
+        builder.dropColumn = jest.fn((name) => droppedColumns.push(name));
+        cb(builder);
+        addedColumns.push(...builder.columns);
+      }),
+    };
+
+    await plantillaMigration.up(mockKnex);
+    expect(addedColumns.map((c) => c.name)).toContain('plantilla');
+    expect(updates).toHaveLength(2);
+
+    await plantillaMigration.down(mockKnex);
+    expect(droppedColumns).toContain('plantilla');
   });
 });
